@@ -10,7 +10,7 @@ app.use(cors());
 
 const secretKey = 'rex-secret-key';
 
-const db = require ('/database');
+const db = require ('./database');
 const {authenticateToken} = require ('../authentication/authenticate');
 
 //register

@@ -10,8 +10,8 @@ app.use(cors());
 
 const secretKey = 'rex-secret-key';
 
-const db = require ('/Users/wiggl/Desktop/Prelim/backend/routes/database');
-const {authenticateToken} = require ('/Users/wiggl/Desktop/Prelim/backend/authentication/authenticate');
+const db = require ('/database');
+const {authenticateToken} = require ('../authentication/authenticate');
 
 
 // Add a new purchase

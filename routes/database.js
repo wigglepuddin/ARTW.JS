@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: 'sql6.freemysqlhosting.net',
     user: 'sql6683442',
     password: 'UjIAP5nZas',
@@ -9,7 +9,7 @@ const db = mysql.createConnection({
 });
 
 
-db.connect((err) => {
+db.getConnection((err) => {
 
     if (err) {
         console.error('Error connecting to database:', err);

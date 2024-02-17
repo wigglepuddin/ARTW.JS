@@ -18,7 +18,7 @@ router.post('/api/ARTWregister', async (req,res) =>{
 
     try {
 
-        const {name, username, password} = req.body;
+        const {name, username, password, role_id} = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const insertUserQuery = 'INSERT INTO users (name, username, password, role_id) VALUES (?,?,?,?)';

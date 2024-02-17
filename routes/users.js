@@ -65,7 +65,7 @@ router.get('/api/ARTWusers',authenticateToken, (req, res) => {
 
     try {
 
-        db.query('SELECT id, name, username FROM users', (err, result) =>{
+        db.query('SELECT id, name, username, role_id FROM users', (err, result) =>{
             
             if(err){
                 console.error('Error fetching items:', err);
@@ -91,7 +91,7 @@ router.get('/api/ARTWuser/:id', authenticateToken,  async (req, res) => {
     }
 
     try {
-        db.query('SELECT id, name, username FROM users WHERE id = ?', user_id, (err, result) => {
+        db.query('SELECT id, name, username, role_id FROM users WHERE id = ?', user_id, (err, result) => {
             
             if (err){
                 console.error('Dae ko makua ang mga items par:', err);
@@ -119,7 +119,7 @@ router.put('/api/ARTWuser/:id', authenticateToken, async (req, res) => {
     }
 
     try {
-        db.query('UPDATE users SET name = ?, username = ?, password = ? WHERE id = ?', [name, username, hashedPassword, user_id], (err, result, fields) => {
+        db.query('UPDATE users SET name = ?, username = ?, password = ? role_id = ? WHERE id = ?', [name, username, hashedPassword, role_id, user_id], (err, result, fields) => {
             if (err) {
                 console.error('Error updating item:', err);
                 res.status(500).json({ error: 'Internal Server Error' });

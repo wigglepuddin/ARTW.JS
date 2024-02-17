@@ -119,7 +119,7 @@ router.put('/api/ARTWuser/:id', authenticateToken, async (req, res) => {
     }
 
     try {
-        db.query('UPDATE users SET name = ?, username = ?, password = ? role_id = ? WHERE id = ?', [name, username, hashedPassword, role_id, user_id], (err, result, fields) => {
+        db.query('UPDATE users SET name = ?, username = ?, password = ?, role_id = ? WHERE id = ?', [name, username, hashedPassword, role_id, user_id], (err, result, fields) => {
             if (err) {
                 console.error('Error updating item:', err);
                 res.status(500).json({ error: 'Internal Server Error' });

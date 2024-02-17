@@ -61,7 +61,7 @@ router.post('/api/ARTWlogin', async (req,res) => {
 });
 
 //get user 
-router.get('/api/ARTWusers', (req, res) => {
+router.get('/api/ARTWusers',authenticateToken, (req, res) => {
 
     try {
 
@@ -134,7 +134,7 @@ router.put('/api/ARTWuser/:id', authenticateToken, async (req, res) => {
 });
 
 //delete user
-router.delete('/api/ARTWuser/:id', async (req, res) => {
+router.delete('/api/ARTWuser/:id',authenticateToken, async (req, res) => {
 
     let user_id = req.params.id;
 

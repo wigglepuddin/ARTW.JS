@@ -111,10 +111,10 @@ router.put('/api/ARTWuser/:id', authenticateToken, async (req, res) => {
 
     let user_id = req.params.id;
 
-    const { name, username, password } = req.body;
+    const { name, username, password, role_id } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (!user_id || !name || !username || !password) {
+    if (!user_id || !name || !username || !password || !role_id) {
         return res.status(400).send({ error: user, message: 'Please provide name, username, and password' });
     }
 

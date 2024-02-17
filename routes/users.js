@@ -21,13 +21,13 @@ router.post('/api/ARTWregister', async (req,res) =>{
         const {name, username, password} = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const insertUserQuery = 'INSERT INTO users (name, username, password) VALUES (?,?,?)';
-        await db.promise().execute(insertUserQuery, [name, username, hashedPassword]);
+        const insertUserQuery = 'INSERT INTO users (name, username, password, role_id) VALUES (?,?,?,?)';
+        await db.promise().execute(insertUserQuery, [name, username, hashedPassword, role_id]);
 
-        res.status(201).json({message: "Regsitered"});
+        res.status(201).json({message: "Registered"});
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({error: 'Enternal error'});
+        res.status(500).json({error: 'Internal error'});
     }
 });
 

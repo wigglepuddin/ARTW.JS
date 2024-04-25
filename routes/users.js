@@ -13,28 +13,21 @@ const secretKey = 'rex-secret-key';
 const db = require ('./database');
 const {authenticateToken} = require ('../authentication/authenticate');
 
-router.post('/api/ARTWregister', async (req, res) => {
-    const { name, username, password, role_id } = req.body;
+//register
+router.post('/api/ARTWregister', async (req,res) =>{
 
     try {
-        // Check if the username already exists
-        const [existingUser] = await db.promise().query('SELECT * FROM users WHERE username = ?', [username]);
 
-        if (existingUser.length) {
-            return res.status(400).json({ error: 'Username already exists' });
-        }
+        const {name, username, password} = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Set default status to 'active'
-        const status = 'active';
+        const insertUserQuery = 'INSERT INTO users (name, username, password) VALUES (?,?,?)';
+        await db.promise().execute(insertUserQuery, [name, username, hashedPassword]);
 
-        // Insert the new user into the database
-        await db.promise().query('INSERT INTO users (name, username, password, role_id, status) VALUES (?, ?, ?, ?, ?)', [name, username, password, role_id, status]);
-
-        // Send response with success message
-        res.status(201).json({ message: 'User created successfully' });
+        res.status(201).json({message: "Regsitered"});
     } catch (error) {
-        console.error('Error creating user:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error:', error);
+        res.status(500).json({error: 'Enternal error'});
     }
 });
 
@@ -69,11 +62,11 @@ router.post('/api/ARTWlogin', async (req,res) => {
 });
 
 //get user 
-router.get('/api/ARTWusers', (req, res) => {
+router.get('/api/ARTWusers',authenticateToken, (req, res) => {
 
     try {
 
-        db.query('SELECT id, name, username FROM users', (err, result) =>{
+        db.query('SELECT id, name, username, role_id FROM users', (err, result) =>{
             
             if(err){
                 console.error('Error fetching items:', err);
@@ -99,7 +92,7 @@ router.get('/api/ARTWuser/:id', authenticateToken,  async (req, res) => {
     }
 
     try {
-        db.query('SELECT id, name, username FROM users WHERE id = ?', user_id, (err, result) => {
+        db.query('SELECT id, name, username, role_id FROM users WHERE id = ?', user_id, (err, result) => {
             
             if (err){
                 console.error('Dae ko makua ang mga items par:', err);
@@ -119,15 +112,15 @@ router.put('/api/ARTWuser/:id', authenticateToken, async (req, res) => {
 
     let user_id = req.params.id;
 
-    const { name, username, password, status } = req.body;
+    const { name, username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (!user_id || !name || !username || !password || !status) {
-        return res.status(400).send({ error: user, message: 'Please provide name, username, password, and status' });
+    if (!user_id || !name || !username || !password) {
+        return res.status(400).send({ error: user, message: 'Please provide name, username, and password' });
     }
 
     try {
-        db.query('UPDATE users SET name = ?, username = ?, password = ?, status = ? WHERE id = ?', [name, username, hashedPassword, status, user_id], (err, result, fields) => {
+        db.query('UPDATE users SET name = ?, username = ?, password = ? WHERE id = ?', [name, username, hashedPassword, user_id], (err, result, fields) => {
             if (err) {
                 console.error('Error updating user:', err);
                 res.status(500).json({ error: 'Internal Server Error' });
@@ -141,56 +134,25 @@ router.put('/api/ARTWuser/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Disable or enable user
-router.put('/api/ARTWuser/disable/:userId', async (req, res) => {
-    const { userId } = req.params;
+//delete user
+router.delete('/api/ARTWuser/:id', async (req, res) => {
 
-    try {
-        // Check if the user exists
-        const [user] = await db.promise().query('SELECT * FROM users WHERE id = ?', [userId]);
+    let user_id = req.params.id;
 
-        if (!user.length) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // Get the current status of the user
-        const currentStatus = user[0].status;
-
-        // Toggle the status of the user
-        const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-
-        // Update the user status in the database
-        await db.promise().query('UPDATE users SET status = ? WHERE id = ?', [newStatus, userId]);
-
-        // Send response with updated status message
-        res.status(200).json({ message: `User ${currentStatus === 'active' ? 'disabled' : 'enabled'} successfully` });
-    } catch (error) {
-        console.error('Error toggling user status:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+    if (!user_id) {
+        return res.status(400).send({ error: true, message: 'provide  user_id'});
     }
-});
 
-// Reset password
-router.put('/api/ARTWresetPassword/:id', async (req, res) => {
-    const userId = req.params.id;
-    const { newPassword } = req.body;
+    try{
+        db.query('DELETE FROM users WHERE id = ?', user_id, (err, result, fields) => {
 
-    try {
-        // Check if the user exists
-        const [user] = await db.promise().query('SELECT * FROM users WHERE id = ?', [userId]);
-
-        if (!user.length) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        // Hash the new password
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-        // Update the user's password in the database
-        await db.promise().query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId]);
-
-        // Send response with success message
-        res.status(200).json({ message: 'Password reset successfully' });
+            if(err) {
+                console.error('Error delete items:', err);
+                res.status(500).json({ message: 'Internal Server ang Error Boi'});
+            } else {
+                res.status(200).json(result);
+            }
+        });
     } catch (error) {
         console.error('Error resetting password:', error);
         res.status(500).json({ error: 'Internal Server Error' });

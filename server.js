@@ -40,7 +40,7 @@ app.use(saleseRouter);
 
 
 app.get('/api', (req,res) => {
-    res.json({message: 'Restful API Backend Using ExpressJS'});
+    res.json({message: 'Welcome to ARTW'});
 });
 
 app.listen(PORT, () => {

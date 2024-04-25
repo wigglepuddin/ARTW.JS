@@ -40,7 +40,7 @@ const rolesRouter = require('./routes/roles');
 
 
 
-const db = require ('/Users/wiggl/Desktop/Prelim/backend/routes/database');
+const db = require ('./routes/database');
 
 
 const PORT = process.env.PORT || 3001;

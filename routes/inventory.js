@@ -87,26 +87,32 @@ router.put('/api/ARTWinventory/:inventoryId', async (req, res) => {
     }
 });
 
-// Delete inventory item by ID
-router.delete('/api/ARTWinventory/:inventoryId', async (req, res) => {
-    let inventory_id = req.params.inventoryId;
-    if (!inventory_id) {
-        return res.status(400).send({ error: true, message: 'provide inventory_id' });
-    }
+router.put('/api/ARTWproduct/disable/:productId', async (req, res) => {
+    const { productId } = req.params;
 
     try {
-        db.query('DELETE FROM inventory WHERE inventory_id = ?', inventory_id, (err, result) => {
-            if (err) {
-                console.error('Error deleting inventory item:', err);
-                res.status(500).json({ message: 'Internal Server Error' });
-            } else {
-                res.status(200).json(result);
-            }
-        });
+        // Check the current status of the product
+        const [product] = await db.promise().query('SELECT * FROM products WHERE product_id = ?', [productId]);
+
+        if (!product.length) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        const currentStatus = product[0].status;
+
+        // Toggle the status of the product in the database
+        const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+
+        await db.promise().query('UPDATE products SET status = ? WHERE product_id = ?', [newStatus, productId]);
+
+        res.status(200).json({ message: `Product ${currentStatus === 'active' ? 'disabled' : 'enabled'} successfully` });
     } catch (error) {
-        console.error('Error loading inventory items:', error);
+        console.error('Error toggling product status:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+
+
 
 module.exports = router;

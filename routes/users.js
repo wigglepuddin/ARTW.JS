@@ -14,20 +14,20 @@ const db = require ('./database');
 const {authenticateToken} = require ('../authentication/authenticate');
 
 //register
-router.post('/api/ARTWregister', async (req,res) =>{
+router.post('/api/ARTWregister', async (req, res) => {
 
     try {
 
-        const {name, username, password} = req.body;
+        const { name, username, password, role_id, status } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const insertUserQuery = 'INSERT INTO users (name, username, password) VALUES (?,?,?)';
-        await db.promise().execute(insertUserQuery, [name, username, hashedPassword]);
+        const insertUserQuery = 'INSERT INTO users (name, username, password, role_id, status) VALUES (?,?,?,?,?)';
+        await db.promise().execute(insertUserQuery, [name, username, hashedPassword, role_id, status]);
 
-        res.status(201).json({message: "Regsitered"});
+        res.status(201).json({ message: "Registered" });
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({error: 'Enternal error'});
+        res.status(500).json({ error: 'Internal error' });
     }
 });
 
@@ -106,57 +106,101 @@ router.get('/api/ARTWuser/:id', authenticateToken,  async (req, res) => {
     }
 });
 
-//update user
+// Update user
 router.put('/api/ARTWuser/:id', authenticateToken, async (req, res) => {
-
     let user_id = req.params.id;
-
-    const { name, username, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    if (!user_id || !name || !username || !password) {
-        return res.status(400).send({ error: user, message: 'Please provide name, username, and password' });
+    const { name, username, password, role_id } = req.body;
+    
+    if (!user_id || !name || !username || !role_id) {
+        return res.status(400).send({ error: 'User data missing', message: 'Please provide name, username, and role_id' });
     }
 
     try {
-        db.query('UPDATE users SET name = ?, username = ?, password = ? WHERE id = ?', [name, username, hashedPassword, user_id], (err, result, fields) => {
+        let sqlQuery;
+        let params;
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            sqlQuery = 'UPDATE users SET name = ?, username = ?, password = ?, role_id = ? WHERE id = ?';
+            params = [name, username, hashedPassword, role_id, user_id];
+        } else {
+            sqlQuery = 'UPDATE users SET name = ?, username = ?, role_id = ? WHERE id = ?';
+            params = [name, username, role_id, user_id];
+        }
+        db.query(sqlQuery, params, (err, result, fields) => {
             if (err) {
-                console.error('Error updating item:', err);
+                console.error('Error updating user:', err);
                 res.status(500).json({ error: 'Internal Server Error' });
             } else {
-                res.status(200).json(result);
+                res.status(200).json({ message: 'User updated successfully' });
             }
         });
     } catch (error) {
-        console.error('Error loading user:', error);
-        res.status(500).json({error: 'Internal Server Error'});
+        console.error('Error updating user:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-//delete user
-router.delete('/api/ARTWuser/:id', async (req, res) => {
 
-    let user_id = req.params.id;
 
-    if (!user_id) {
-        return res.status(400).send({ error: true, message: 'provide  user_id'});
-    }
 
-    try{
-        db.query('DELETE FROM users WHERE id = ?', user_id, (err, result, fields) => {
+// Disable or enable user
+router.put('/api/ARTWuser/disable/:userId', async (req, res) => {
+    const { userId } = req.params;
 
-            if(err) {
-                console.error('Error delete items:', err);
-                res.status(500).json({ message: 'Internal Server ang Error Boi'});
-            } else {
-                res.status(200).json(result);
-            }
-        });
+    try {
+        // Check if the user exists
+        const [user] = await db.promise().query('SELECT * FROM users WHERE id = ?', [userId]);
+
+        if (!user.length) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Get the current status of the user
+        const currentStatus = user[0].status;
+
+        // Toggle the status of the user
+        const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+
+        // Update the user status in the database
+        await db.promise().query('UPDATE users SET status = ? WHERE id = ?', [newStatus, userId]);
+
+        // Send response with updated status message
+        res.status(200).json({ message: `User ${currentStatus === 'active' ? 'disabled' : 'enabled'} successfully` });
     } catch (error) {
-        console.error('Error mag loading ang users:', error);
-        res.status(500).json({ error: 'Internal Server Error'});
+        console.error('Error toggling user status:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+// Reset password
+router.put('/api/ARTWresetPassword/:id', async (req, res) => {
+    const userId = req.params.id;
+    const { newPassword } = req.body;
+
+    try {
+        // Check if the user exists
+        const [user] = await db.promise().query('SELECT * FROM users WHERE id = ?', [userId]);
+
+        if (!user.length) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update the user's password in the database
+        await db.promise().query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, userId]);
+
+        // Send response with success message
+        res.status(200).json({ message: 'Password reset successfully' });
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+
 
 
 module.exports = router;

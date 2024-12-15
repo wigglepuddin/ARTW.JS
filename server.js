@@ -9,78 +9,49 @@ app.use(cors());
 
 //User router
 const UserRouter = require('./routes/users');
-
-
-//Product router
 const ProductsRouter = require('./routes/products');
-
-
-//Purchase router
 const PurchaseRouter = require('./routes/purchase');
-
-
-//Customer router
 const CustomerRouter = require('./routes/customer');
-
-
-//Inventory router
 const InventoryRouter = require('./routes/inventory');
-
-
-//Stocks router
 const StocksRouter = require('./routes/stocks');
-
-
-//Inventory_list router
 const Inventory_listRouter = require('./routes/inventory_list');
-
-
-//Roles router
 const rolesRouter = require('./routes/roles');
-
+const saleseRouter = require('./routes/sales');
+const categoryRouter = require('./routes/category');
+const supplierRouter = require('./routes/supplier');
+const sales_by_dateRouter = require('./routes/sales_by_date');
 
 
 const db = require ('./routes/database');
-
-
 const PORT = process.env.PORT || 3001;
+
+const corsOptions = {
+    origin: 'http://localhost:3000',
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.set('trust proxy',1);
+app.use(bodyparser.json());
+
+
 
 app.use(bodyparser.json());
 
 //User router
 app.use(UserRouter);
-
-
-
-//Products router
 app.use(ProductsRouter);
-
-
-//Purchase router
 app.use(PurchaseRouter);
-
-
-//Customer router
 app.use(CustomerRouter);
-
-
-//Inventory Router
 app.use(InventoryRouter);
-
-
-//Stocks router
 app.use(StocksRouter);
-
-
-//Inventory_list router
 app.use(Inventory_listRouter);
-
-
-//Roles router
 app.use(rolesRouter);
-
-
-
+app.use(saleseRouter);
+app.use(categoryRouter);
+app.use(supplierRouter);
+app.use(saleseRouter);
+app.use(sales_by_dateRouter)
 
 
 app.get('/api', (req,res) => {

@@ -136,36 +136,7 @@ router.put('/api/ARTWuser/:id', authenticateToken, async (req, res) => {
             }
         });
     } catch (error) {
-<<<<<<< HEAD
         console.error('Error updating user:', error);
-=======
-        console.error('Error loading user:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
-//delete user
-router.delete('/api/ARTWuser/:id', async (req, res) => {
-
-    let user_id = req.params.id;
-
-    if (!user_id) {
-        return res.status(400).send({ error: true, message: 'provide  user_id'});
-    }
-
-    try{
-        db.query('DELETE FROM users WHERE id = ?', user_id, (err, result, fields) => {
-
-            if(err) {
-                console.error('Error delete items:', err);
-                res.status(500).json({ message: 'Internal Server ang Error Boi'});
-            } else {
-                res.status(200).json(result);
-            }
-        });
-    } catch (error) {
-        console.error('Error resetting password:', error);
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -173,7 +144,6 @@ router.delete('/api/ARTWuser/:id', async (req, res) => {
 
 
 
-<<<<<<< HEAD
 // Disable or enable user
 router.put('/api/ARTWuser/disable/:userId', async (req, res) => {
     const { userId } = req.params;
@@ -233,7 +203,5 @@ router.put('/api/ARTWresetPassword/:id', async (req, res) => {
 
 
 
-=======
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
 
 module.exports = router;

@@ -18,16 +18,10 @@ const { authenticateToken } = require ('../authentication/authenticate');
 router.post('/api/ARTWproducts', async (req, res) => {
     try {
         const { inventory_list_id, product_name, quantity_in_stock, price, supplier } = req.body;
-<<<<<<< HEAD
         const barcode = uuidv4(); // Generate a unique barcode
 
         const insertInventoryQuery = 'INSERT INTO products (inventory_list_id, product_name, quantity_in_stock, price, supplier, date, barcode) VALUES (?, ?, ?, ?, ?, NOW(), ?)';
         await db.promise().execute(insertInventoryQuery, [inventory_list_id, product_name, quantity_in_stock, price, supplier, barcode]);
-=======
-
-        const insertInventoryQuery = 'INSERT INTO products (inventory_list_id, product_name, quantity_in_stock, price, supplier, date) VALUES (?, ?, ?, ?, ?, NOW())';
-        await db.promise().execute(insertInventoryQuery, [inventory_list_id, product_name, quantity_in_stock, price, supplier]);
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
 
         res.status(201).json({ message: "Inventory item added successfully" });
     } catch (error) {
@@ -38,16 +32,10 @@ router.post('/api/ARTWproducts', async (req, res) => {
 
 
 // Get all inventory items
-<<<<<<< HEAD
 // Get all non-archived inventory items
 router.get('/api/ARTWproducts', (req, res) => {
     try {
         db.query('SELECT * FROM products WHERE status != "archived"', (err, result) => {
-=======
-router.get('/api/ARTWproducts', (req, res) => {
-    try {
-        db.query('SELECT * FROM products', (err, result) => {
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
             if (err) {
                 console.error('Error fetching inventory items:', err);
                 res.status(500).json({ message: 'Internal Server Error' });
@@ -61,11 +49,8 @@ router.get('/api/ARTWproducts', (req, res) => {
     }
 });
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
 // Get inventory item by ID
 router.get('/api/ARTWproducts/:productId', (req, res) => {
     let productId = req.params.productId;
@@ -134,11 +119,7 @@ router.put('/api/ARTWproducts/disable/:productId', async (req, res) => {
         console.error('Error toggling product status:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-<<<<<<< HEAD
 }); 
-=======
-});
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
 
 // Delete inventory item by ID
 router.delete('/api/ARTWproducts/:productId', async (req, res) => {
@@ -161,7 +142,6 @@ router.delete('/api/ARTWproducts/:productId', async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
 // Archive inventory item by ID
 router.put('/api/ARTWproducts/archive/:productId', async (req, res) => {
     const productId = req.params.productId;
@@ -183,7 +163,5 @@ router.put('/api/ARTWproducts/archive/:productId', async (req, res) => {
     }
 });
 
-=======
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
 
 module.exports = router;

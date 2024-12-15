@@ -17,13 +17,9 @@ const StocksRouter = require('./routes/stocks');
 const Inventory_listRouter = require('./routes/inventory_list');
 const rolesRouter = require('./routes/roles');
 const saleseRouter = require('./routes/sales');
-<<<<<<< HEAD
 const categoryRouter = require('./routes/category');
 const supplierRouter = require('./routes/supplier');
 const sales_by_dateRouter = require('./routes/sales_by_date');
-=======
-
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
 
 
 const db = require ('./routes/database');
@@ -52,15 +48,10 @@ app.use(StocksRouter);
 app.use(Inventory_listRouter);
 app.use(rolesRouter);
 app.use(saleseRouter);
-<<<<<<< HEAD
 app.use(categoryRouter);
 app.use(supplierRouter);
 app.use(saleseRouter);
 app.use(sales_by_dateRouter)
-=======
-
-
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
 
 
 app.get('/api', (req,res) => {

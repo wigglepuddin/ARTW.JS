@@ -97,7 +97,6 @@ router.get('/api/ARTWinventory_list/:inventoryListId', (req, res) => {
     }
 });
 
-<<<<<<< HEAD
 
 // Update inventory list entry
 router.put('/api/ARTWinventory_list/:id', async (req, res) => {
@@ -111,27 +110,6 @@ router.put('/api/ARTWinventory_list/:id', async (req, res) => {
         await db.promise().execute(updateInventoryListQuery, params);
 
         res.status(200).json({ message: "Inventory list entry updated successfully" });
-=======
-// Update inventory list entry by ID
-router.put('/api/ARTWinventory_list/:inventoryListId', async (req, res) => {
-    let inventory_list_id = req.params.inventoryListId;
-    const { title, date, time } = req.body;
-
-    if (!inventory_list_id || !title || !date || !time) {
-        return res.status(400).send({ error: true, message: 'Please provide title, date, and time' });
-    }
-
-    try {
-        const updateInventoryListQuery = 'UPDATE inventory_list SET title = ?, date = ?, time = ? WHERE inventory_list_id = ?';
-        db.query(updateInventoryListQuery, [title, date, time, inventory_list_id], (err, result) => {
-            if (err) {
-                console.error('Error updating inventory list entry:', err);
-                res.status(500).json({ error: 'Internal Server Error' });
-            } else {
-                res.status(200).json(result);
-            }
-        });
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
     } catch (error) {
         console.error('Error updating inventory list entry:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -139,11 +117,8 @@ router.put('/api/ARTWinventory_list/:inventoryListId', async (req, res) => {
 });
 
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
 // Delete inventory list entry by ID
 router.delete('/api/ARTWinventory_list/:inventoryListId', async (req, res) => {
     let inventory_list_id = req.params.inventoryListId;
@@ -166,10 +141,6 @@ router.delete('/api/ARTWinventory_list/:inventoryListId', async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
 // Get inventory items by list ID
 router.get('/api/ARTWproducts/list/:listId', (req, res) => {
     let listId = req.params.listId;

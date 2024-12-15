@@ -16,7 +16,6 @@ const {authenticateToken} = require ('../authentication/authenticate');
 // Add a new sales item
 router.post('/api/ARTWaddsales', async (req, res) => {
     try {
-<<<<<<< HEAD
         const { product_name, quantity_sold, sale_date, total_amount } = req.body;
 
         // Check if sale_date is provided, otherwise, default to the current date
@@ -30,12 +29,6 @@ router.post('/api/ARTWaddsales', async (req, res) => {
         `;
 
         await db.promise().execute(insertSalesQuery, [quantity_sold, dateToUse, quantity_sold, product_name]);
-=======
-        const { product_id, quantity_sold, sale_date, total_amount } = req.body;
-
-        const insertSalesQuery = 'INSERT INTO sales (product_id, quantity_sold, sale_date, total_amount) VALUES (?, ?, ?, ?)';
-        await db.promise().execute(insertSalesQuery, [product_id, quantity_sold, sale_date, total_amount]);
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
 
         res.status(201).json({ message: "Sales item added successfully" });
     } catch (error) {
@@ -44,10 +37,6 @@ router.post('/api/ARTWaddsales', async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
 // Get all sales items
 router.get('/api/ARTWsales', (req, res) => {
     try {
@@ -84,7 +73,6 @@ router.get('/api/ARTWsale/:saleId', (req, res) => {
 });
 
 // Update sales item by ID
-<<<<<<< HEAD
 // Update only the quantity_sold by sale ID
 router.put('/api/ARTWsale/:saleId', async (req, res) => {
     let sale_id = req.params.saleId;
@@ -129,31 +117,6 @@ router.put('/api/ARTWsale/:saleId', async (req, res) => {
         });
     } catch (error) {
         console.error('Error updating sale item:', error);
-=======
-router.put('/api/ARTWsale/:saleId', async (req, res) => {
-    let sale_id = req.params.saleId;
-    const { product_id, quantity_sold, sale_date, total_amount } = req.body;
-
-    if (!sale_id || !product_id || !quantity_sold || !sale_date || !total_amount) {
-        return res.status(400).send({ error: true, message: 'Please provide product_id, quantity_sold, sale_date, and total_amount' });
-    }
-
-    try {
-        db.query('UPDATE sales SET product_id = ?, quantity_sold = ?, sale_date = ?, total_amount = ? WHERE sale_id = ?', [product_id, quantity_sold, sale_date, total_amount, sale_id], (err, result) => {
-            if (err) {
-                console.error('Error updating sales item:', err);
-                return res.status(500).json({ error: 'Internal Server Error' });
-            } else {
-                // Check if any rows were affected by the update
-                if (result.affectedRows === 0) {
-                    return res.status(404).json({ error: true, message: 'Sale item not found' });
-                }
-                res.status(200).json({ success: true, message: 'Sale item updated successfully' });
-            }
-        });
-    } catch (error) {
-        console.error('Error updating sales item:', error);
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -163,11 +126,7 @@ router.put('/api/ARTWsale/:saleId', async (req, res) => {
 router.delete('/api/ARTWsale/:saleId', async (req, res) => {
     let sale_id = req.params.saleId;
     if (!sale_id) {
-<<<<<<< HEAD
         return res.status(400).send({ error: true, message: 'Provide sale_id' });
-=======
-        return res.status(400).send({ error: true, message: 'provide sale_id' });
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
     }
 
     try {
@@ -180,16 +139,11 @@ router.delete('/api/ARTWsale/:saleId', async (req, res) => {
             }
         });
     } catch (error) {
-<<<<<<< HEAD
         console.error('Error deleting sales item:', error);
-=======
-        console.error('Error loading sale items:', error);
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-<<<<<<< HEAD
 // Get all sales items with profit calculation
 router.get('/api/ARTWsales', async (req, res) => {
     try {
@@ -259,6 +213,4 @@ router.get('/api/ARTWprofits', async (req, res) => {
 
 
 
-=======
->>>>>>> 38ace3fc3421c27ef805c7d16e7da8978d871aeb
 module.exports = router;
